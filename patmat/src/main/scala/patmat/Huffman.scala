@@ -198,7 +198,7 @@ object Huffman {
           if (chars(cTree.left) contains char) encodeImpl(cTree.left, char, acc :+ 0) else encodeImpl(cTree.right, char, acc :+ 1)
       }
     
-    text flatMap { c => encodeImpl(tree, c, List[Bit]()) }
+    text.flatMap(c => encodeImpl(tree, c, List[Bit]()))
   }
 
   
@@ -212,7 +212,7 @@ object Huffman {
    */
   def codeBits(table: CodeTable)(char: Char): List[Bit] = table.find(_._1 == char) match {
     case Some((_, bits)) => bits
-    case _               => List()
+    case _               => List[Bit]()
   }
   
   /**
@@ -247,8 +247,5 @@ object Huffman {
    */
   def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = 
     text.flatMap(codeBits(convert(tree)))
-  def main(args:Array[String]){
-    val t1 = Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5)
-    println(encode(t1)("ab".toList))
-  }
+
 }

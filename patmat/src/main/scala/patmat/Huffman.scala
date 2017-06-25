@@ -156,15 +156,14 @@ object Huffman {
    * the resulting list of characters.
    */
   def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
-    def decodeImpl(tree: CodeTree, remBits: List[Bit], acc: List[Char]): List[Char] = {
-      (tree, remBits) match {
-        case (tree: Leaf, Nil) => acc :+ tree.char
-        case (tree: Leaf, rest) => decodeImpl(tree, rest, acc :+ tree.char)
-        case (tree: Fork, 0 :: rest) => decodeImpl(tree.left, rest, acc)
-        case (tree: Fork, 1 :: rest) => decodeImpl(tree.right, rest, acc)
+    def decodeImpl(cTree: CodeTree, remBits: List[Bit], acc: List[Char]): List[Char] = {
+      (cTree, remBits) match {
+        case (cTree: Leaf, rest) => if (rest.size == 0) acc :+ cTree.char else decodeImpl(tree, rest, acc :+ cTree.char)
+        case (cTree: Fork, 0 :: rest) => decodeImpl(cTree.left, rest, acc)
+        case (cTree: Fork, 1 :: rest) => decodeImpl(cTree.right, rest, acc)
       }
     }
-    decodeImpl(tree, bits, List())
+    decodeImpl(tree, bits, List[Char]())
   }
   
   /**
@@ -193,13 +192,13 @@ object Huffman {
    * into a sequence of bits.
    */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
-    def encodeImpl(tree: CodeTree, char: Char, acc: List[Bit]): List[Bit] = tree match {
-        case tree: Leaf => acc
-        case tree: Fork => 
-          if (chars(tree.left) contains char) encodeImpl(tree.left, char, acc :+ 0) else encodeImpl(tree.right, char, acc :+ 1)
+    def encodeImpl(cTree: CodeTree, char: Char, acc: List[Bit]): List[Bit] = cTree match {
+        case cTree: Leaf => acc
+        case cTree: Fork => 
+          if (chars(cTree.left) contains char) encodeImpl(cTree.left, char, acc :+ 0) else encodeImpl(cTree.right, char, acc :+ 1)
       }
     
-    text flatMap { c => encodeImpl(tree, c, List()) }
+    text flatMap { c => encodeImpl(tree, c, List[Bit]()) }
   }
 
   
@@ -248,5 +247,8 @@ object Huffman {
    */
   def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = 
     text.flatMap(codeBits(convert(tree)))
-
+  def main(args:Array[String]){
+    val t1 = Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5)
+    println(encode(t1)("ab".toList))
+  }
 }

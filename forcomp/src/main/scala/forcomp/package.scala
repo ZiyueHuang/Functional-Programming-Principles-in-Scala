@@ -1,10 +1,9 @@
-
-        cckage object forcomp {
+package object forcomp {
   val dictionaryPath = List("forcomp", "linuxwords.txt")
 
   def loadDictionary = {
     val wordstream = Option {
-      getClass.getResourceAsStream(dictionaryPath.mkString("/"))
+      getClass.getClassLoader.getResourceAsStream(dictionaryPath.mkString("/"))
     } orElse {
       common.resourceAsStreamFromSrc(dictionaryPath)
     } getOrElse {
@@ -23,4 +22,3 @@
   }
 
 }
-ase (tree: Leaf, Nil) => acc :+ tree.char
